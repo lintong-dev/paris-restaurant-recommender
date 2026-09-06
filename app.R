@@ -14,7 +14,10 @@ restaurant_data <- cleaned_paris_restaurants %>%
     price_level = if_else(is.na(price_level), "Unknown", price_level),
     awards = if_else(is.na(awards) | awards == "", "N", awards),
     vegetarian_friendly = if_else(!is.na(vegetarian_friendly) & vegetarian_friendly == "Y", "Y", "N"),
-    gluten_free = if_else(!is.na(gluten_free) & gluten_free == "Y", "Y", "N")
+    gluten_free = if_else(!is.na(gluten_free) & gluten_free == "Y", "Y", "N"),
+    recommendation_score = avg_rating * 20 +
+      log1p(total_reviews_count) * 8 +
+      if_else(awards != "N", 10, 0)
   )
 
 category_choices <- sort(unique(restaurant_data$cuisine_category))
@@ -29,7 +32,7 @@ ui <- dashboardPage(
       id = "tabs",
       menuItem("Overview", tabName = "overview", icon = icon("bar-chart")),
       menuItem("Map", tabName = "map", icon = icon("map-marker")),
-      menuItem("Table", tabName = "table", icon = icon("table"))
+      menuItem("Restaurant List", tabName = "restaurant_list", icon = icon("table"))
     ),
     tags$hr(),
     div(
@@ -148,6 +151,13 @@ ui <- dashboardPage(
             status = "primary",
             solidHeader = TRUE,
             DTOutput("price_table")
+          ),
+          box(
+            title = "Top Recommended Restaurants",
+            width = 12,
+            status = "primary",
+            solidHeader = TRUE,
+            DTOutput("recommended_table")
           )
         )
       ),
@@ -164,10 +174,10 @@ ui <- dashboardPage(
         )
       ),
       tabItem(
-        tabName = "table",
+        tabName = "restaurant_list",
         fluidRow(
           box(
-            title = "Filtered Restaurant List",
+            title = "Restaurant List",
             width = 12,
             status = "primary",
             solidHeader = TRUE,
@@ -230,7 +240,11 @@ server <- function(input, output, session) {
       data <- data %>% filter(awards != "N")
     }
 
-    data %>% arrange(desc(.data[[input$sort_by]]), restaurant_name)
+    if (input$sort_by == "popularity_generic") {
+      data %>% arrange(.data[[input$sort_by]], desc(avg_rating), restaurant_name)
+    } else {
+      data %>% arrange(desc(.data[[input$sort_by]]), restaurant_name)
+    }
   })
 
   output$total_restaurants <- renderValueBox({
@@ -284,6 +298,24 @@ server <- function(input, output, session) {
     filtered_data() %>%
       count(price_level, sort = TRUE, name = "restaurants") %>%
       mutate(share = percent(restaurants / sum(restaurants), accuracy = 0.1)) %>%
+      datatable(
+        rownames = FALSE,
+        options = list(dom = "t", pageLength = 10)
+      )
+  })
+
+  output$recommended_table <- renderDT({
+    filtered_data() %>%
+      arrange(desc(recommendation_score), desc(avg_rating), desc(total_reviews_count)) %>%
+      transmute(
+        Restaurant = restaurant_name,
+        Cuisine = paste(cuisine_category, cuisine_subcategory, sep = " - "),
+        Rating = avg_rating,
+        Reviews = total_reviews_count,
+        Price = price_level,
+        Awards = if_else(awards == "N", "No", "Yes")
+      ) %>%
+      head(10) %>%
       datatable(
         rownames = FALSE,
         options = list(dom = "t", pageLength = 10)

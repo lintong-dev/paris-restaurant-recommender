@@ -5,9 +5,9 @@ This project is an interactive R Shiny dashboard for exploring restaurant recomm
 ## Features
 
 - Filter restaurants by cuisine category, cuisine subcategory, price level, rating range, vegetarian-friendly options, gluten-free options, and awards.
-- View summary metrics in a dedicated overview tab.
-- Explore restaurants on an interactive Leaflet map.
-- Search, sort, and paginate the restaurant table with DT.
+- View summary metrics and top recommended restaurants in a dedicated overview tab.
+- Explore restaurants on an interactive Leaflet map with hover labels and detailed popups.
+- Search, sort, and paginate the restaurant list with DT.
 
 ## Project Structure
 
