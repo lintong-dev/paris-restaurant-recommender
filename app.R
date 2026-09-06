@@ -27,7 +27,7 @@ ui <- dashboardPage(
     width = 300,
     sidebarMenu(
       id = "tabs",
-      menuItem("KPIs", tabName = "kpis", icon = icon("bar-chart")),
+      menuItem("Overview", tabName = "overview", icon = icon("bar-chart")),
       menuItem("Map", tabName = "map", icon = icon("map-marker")),
       menuItem("Table", tabName = "table", icon = icon("table"))
     ),
@@ -127,7 +127,7 @@ ui <- dashboardPage(
     ),
     tabItems(
       tabItem(
-        tabName = "kpis",
+        tabName = "overview",
         fluidRow(
           valueBoxOutput("total_restaurants", width = 3),
           valueBoxOutput("avg_rating", width = 3),
@@ -308,6 +308,12 @@ server <- function(input, output, session) {
         fillOpacity = 0.75,
         color = "#246a9b",
         clusterOptions = markerClusterOptions(),
+        label = ~restaurant_name,
+        labelOptions = labelOptions(
+          direction = "auto",
+          textOnly = FALSE,
+          opacity = 0.9
+        ),
         popup = ~paste0(
           "<strong>", restaurant_name, "</strong><br>",
           "Rating: ", avg_rating, "<br>",
