@@ -335,10 +335,13 @@ server <- function(input, output, session) {
       addCircleMarkers(
         lng = ~longitude,
         lat = ~latitude,
-        radius = 5,
-        stroke = FALSE,
-        fillOpacity = 0.75,
-        color = "#246a9b",
+        radius = ~pmax(6, avg_rating * 1.8),
+        stroke = TRUE,
+        weight = 2,
+        opacity = 1,
+        fillOpacity = 0.88,
+        color = "#ffffff",
+        fillColor = "#e85d04",
         clusterOptions = markerClusterOptions(),
         label = ~restaurant_name,
         labelOptions = labelOptions(
@@ -354,6 +357,12 @@ server <- function(input, output, session) {
           "Reviews: ", total_reviews_count, "<br>",
           "Awards: ", awards
         )
+      ) %>%
+      addLegend(
+        position = "bottomright",
+        colors = "#e85d04",
+        labels = "Restaurant marker; larger circles indicate higher ratings",
+        opacity = 0.88
       )
   })
 
