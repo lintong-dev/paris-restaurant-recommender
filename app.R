@@ -126,6 +126,17 @@ ui <- dashboardPage(
         .leaflet-container {
           border-radius: 6px;
         }
+
+        .rating-label {
+          background: #ffffff;
+          border: 1px solid #e85d04;
+          border-radius: 12px;
+          color: #9d2b00;
+          font-size: 12px;
+          font-weight: 700;
+          padding: 2px 6px;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
       "))
     ),
     tabItems(
@@ -343,11 +354,14 @@ server <- function(input, output, session) {
         color = "#ffffff",
         fillColor = "#e85d04",
         clusterOptions = markerClusterOptions(),
-        label = ~restaurant_name,
+        label = ~number(avg_rating, accuracy = 0.1),
         labelOptions = labelOptions(
-          direction = "auto",
+          noHide = TRUE,
+          direction = "right",
           textOnly = FALSE,
-          opacity = 0.9
+          opacity = 0.95,
+          offset = c(8, 0),
+          className = "rating-label"
         ),
         popup = ~paste0(
           "<strong>", restaurant_name, "</strong><br>",
