@@ -15,6 +15,8 @@ This project is an interactive R Shiny dashboard for exploring restaurant recomm
 .
 ├── app.R
 ├── cleaned_paris_restaurants.RData
+├── images/
+│   └── map-page.png
 ├── R_app.Rmd
 ├── Programming_R_App_Lin TONG.pdf
 └── README.md
@@ -39,6 +41,12 @@ Or from the terminal:
 ```bash
 Rscript -e "shiny::runApp('.', launch.browser = TRUE)"
 ```
+
+## App Preview
+
+The map view shows filtered Paris restaurants with rating labels beside each marker. Click a marker to view the restaurant name, cuisine, price level, review count, and awards.
+
+![Map page preview](images/map-page.png)
 
 ## Deployment
 
